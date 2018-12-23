@@ -81,7 +81,7 @@ int main()
     // Initialize
     srand(time(NULL));
     std::vector<Individual> population;
-    int POPULATION_SIZE = 10;
+    int POPULATION_SIZE = 6;
     for (int i = 0; i < POPULATION_SIZE; i++)
         population.push_back(Individual());
     std::sort(population.begin(), population.end());
@@ -97,9 +97,9 @@ int main()
         if (population[0].fitness == 5) break;
         for (int i = 0; i < POPULATION_SIZE * 2 / 3; i++)
         {
-            Individual& mom = population[rand() % (population.size() / 2)];
-            Individual& dad = population[rand() % (population.size() / 2)];
-            if (mom == dad) continue;
+            Individual& mom = population[rand() % (population.size() * 2 / 3)];
+            Individual& dad = population[rand() % (population.size() * 2 / 3)];
+            // if (mom == dad) continue;
             Individual child = mom + dad;
             population.push_back(child);
         }
