@@ -30,7 +30,6 @@ public:
 
     void mutate()
     {
-        if (rand() % 3 != 0) return;
         int position = rand() % chromosome.size();
         chromosome[position] = rand() % 2;
         calculateFitness();
@@ -88,14 +87,14 @@ int main()
     std::sort(population.begin(), population.end());
 
     // Evolving
-    // while (true)
-    for (int c = 0; c < 10; c++)
+    while (true)
     {
         for (Individual& i: population)
         {
             i.show();
         }
         std::cout << std::endl;
+        if (population[0].fitness == 5) break;
         for (int i = 0; i < POPULATION_SIZE * 2 / 3; i++)
         {
             Individual& mom = population[rand() % (population.size() / 2)];
