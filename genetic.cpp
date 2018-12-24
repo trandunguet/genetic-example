@@ -3,6 +3,11 @@
 #include <ctime>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <fstream>
+
+int POPULATION_SIZE = 500;
+std::vector<std::pair<int, int>> dataset;
 
 class Individual
 {
@@ -10,28 +15,34 @@ public:
     std::vector<int> chromosome;
     int fitness;
 
-    Individual()
+    Individual(int chromosomeLenght)
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < chromosomeLenght; i++)
         {
-            chromosome.push_back(rand() % 2);
+            chromosome.push_back(rand() % 60 - 30);
         }
         calculateFitness();
     }
 
     int calculateFitness()
     {
+        // Fitness = total error on the whole dataset. The lower the better.
         fitness = 0;
-        for (int& gene : chromosome)
+        for (std::pair<int, int>& data : dataset)
         {
-            fitness += gene;
+            int y = 0;
+            for (int i = 0; i < chromosome.size(); i++)
+            {
+                y += chromosome[i] * pow(data.first, i);
+            }
+            fitness += abs(data.second - y);
         }
     }
 
     void mutate()
     {
         int position = rand() % chromosome.size();
-        chromosome[position] = rand() % 2;
+        chromosome[position] += rand() % 3 - 1;
         calculateFitness();
     }
 
@@ -58,7 +69,7 @@ public:
     // For sorting
     bool operator<(const Individual& other) const
     {
-        return this->fitness > other.fitness;
+        return this->fitness < other.fitness;
     }
 
     bool operator==(const Individual& other) const
@@ -78,32 +89,37 @@ public:
 
 int main()
 {
+    // Input
+    std::ifstream input("genetic.inp");
+    int CHROMOSOME_LENGTH;
+    input >> CHROMOSOME_LENGTH;
+    while (!input.eof())
+    {
+        int x, y;
+        input >> x >> y;
+        dataset.push_back(std::pair<int, int>(x, y));
+    }
+
     // Initialize
     srand(time(NULL));
     std::vector<Individual> population;
-    int POPULATION_SIZE = 6;
     for (int i = 0; i < POPULATION_SIZE; i++)
-        population.push_back(Individual());
-    std::sort(population.begin(), population.end());
+        population.push_back(Individual(CHROMOSOME_LENGTH));
 
     // Evolving
     while (true)
     {
-        for (Individual& i: population)
+        if (population[0].fitness == 0) break;
+        for (int i = 0; i < POPULATION_SIZE; i++)
         {
-            i.show();
-        }
-        std::cout << std::endl;
-        if (population[0].fitness == 5) break;
-        for (int i = 0; i < POPULATION_SIZE * 2 / 3; i++)
-        {
-            Individual& mom = population[rand() % (population.size() * 2 / 3)];
-            Individual& dad = population[rand() % (population.size() * 2 / 3)];
-            // if (mom == dad) continue;
+            Individual& mom = population[rand() % (population.size())];
+            Individual& dad = population[rand() % (population.size())];
+            if (mom == dad) continue;
             Individual child = mom + dad;
             population.push_back(child);
         }
         std::sort(population.begin(), population.end());
+        population[0].show();
         while (population.size() > POPULATION_SIZE)
             population.pop_back();
     }
