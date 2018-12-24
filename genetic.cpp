@@ -15,9 +15,9 @@ public:
     std::vector<int> chromosome;
     int fitness;
 
-    Individual(int chromosomeLenght)
+    Individual(int chromosomeLength)
     {
-        for (int i = 0; i < chromosomeLenght; i++)
+        for (int i = 0; i < chromosomeLength; i++)
         {
             chromosome.push_back(rand() % 60 - 30);
         }
