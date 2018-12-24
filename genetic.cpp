@@ -91,6 +91,11 @@ int main()
 {
     // Input
     std::ifstream input("genetic.inp");
+    if (!input.is_open())
+    {
+        std::cout << "genetic.inp not found. Please create one" << std::endl;
+        return 0;
+    }
     int CHROMOSOME_LENGTH;
     input >> CHROMOSOME_LENGTH;
     while (!input.eof())
@@ -104,7 +109,7 @@ int main()
     srand(time(NULL));
     std::vector<Individual> population;
     for (int i = 0; i < POPULATION_SIZE; i++)
-        population.push_back(Individual(CHROMOSOME_LENGTH));
+        population.push_back(Individual(CHROMOSOME_LENGTH + 1));
 
     // Evolving
     while (true)
